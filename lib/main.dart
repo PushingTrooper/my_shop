@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_shop/screens/product_detail_screen.dart';
 import 'package:my_shop/screens/products_overview_screen.dart';
 
 void main() {
@@ -11,10 +12,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.purple,
-        accentColor: Colors.deepOrange,
-      ),
+          primarySwatch: Colors.purple,
+          accentColor: Colors.deepOrange,
+          fontFamily: 'Lato'),
       home: PrdocutsOverviewScreen(),
+      routes: {
+        ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
+      },
     );
   }
 }
@@ -35,6 +39,9 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(child: Text('Let\'s build a shop'),));
+      body: Center(
+        child: Text('Let\'s build a shop'),
+      ),
+    );
   }
 }
