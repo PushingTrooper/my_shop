@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:my_shop/providers/products.dart';
+import 'package:provider/provider.dart';
 
-import '../models/products.dart';
+import '../providers/product.dart';
 import '../widgets/products_grid.dart';
 
-class PrdocutsOverviewScreen extends StatelessWidget {
+class ProductsOverviewScreen extends StatelessWidget {
   final List<Product> loadedProducts = [
     Product(
       id: 'p1',
@@ -41,6 +43,8 @@ class PrdocutsOverviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //Provider.of<Products>(context).items.addAll(loadedProducts);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('MyShop'),
@@ -49,5 +53,3 @@ class PrdocutsOverviewScreen extends StatelessWidget {
     );
   }
 }
-
-
