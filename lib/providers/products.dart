@@ -125,7 +125,7 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((element) => element.id == id);
     if (prodIndex >= 0) {
       final url = Uri.parse(
-          'https://flutter-shopping-app-42a56-default-rtdb.europe-west1.firebasedatabase.app/products/$id');
+          'https://flutter-shopping-app-42a56-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
 
       Product? removedItem = _items[prodIndex];
       _items.removeAt(prodIndex);
