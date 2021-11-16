@@ -19,13 +19,13 @@ class Product with ChangeNotifier {
       required this.imageUrl,
       this.isFavorite = false});
 
-  void toggleFavoriteStatus() {
+  void toggleFavoriteStatus(String token) {
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
 
     final url = Uri.parse(
-        'https://flutter-shopping-app-42a56-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
+        'https://flutter-shopping-app-42a56-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$token');
     http
         .patch(url, body: jsonEncode({"isFavorite": isFavorite}))
         .then((response) {

@@ -42,19 +42,28 @@ class Products with ChangeNotifier {
     // )
   ];
 
+  late String _token;
+
+  void update(String token, List<Product> products) {
+    _token = token;
+    _items = products;
+  }
+
   List<Product> get items {
     return [..._items];
   }
 
   Future<void> fetchAndSetProducts() async {
     final url = Uri.parse(
-        'https://flutter-shopping-app-42a56-default-rtdb.europe-west1.firebasedatabase.app/products.json');
+        'https://flutter-shopping-app-42a56-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$_token');
 
     try {
       final response = await http.get(url);
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
-      data.forEach((prodId, prodData) {
+      for (var i = 0; i < data.length; i++) {
+        String prodId = data.keys.elementAt(i);
+        dynamic prodData = data.values.elementAt(i);
         loadedProducts.add(Product(
             id: prodId,
             title: prodData['title'],
@@ -62,7 +71,10 @@ class Products with ChangeNotifier {
             price: prodData['price'],
             imageUrl: prodData['imageUrl'],
             isFavorite: prodData['isFavorite']));
-      });
+      }
+      /* data.forEach((prodId, prodData) {
+        
+      }); */
       _items = loadedProducts;
       notifyListeners();
     } catch (error) {
@@ -72,7 +84,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     final url = Uri.parse(
-        'https://flutter-shopping-app-42a56-default-rtdb.europe-west1.firebasedatabase.app/products.json');
+        'https://flutter-shopping-app-42a56-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$_token');
 
     try {
       final response = await http.post(
@@ -105,7 +117,7 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((element) => element.id == id);
     if (prodIndex >= 0) {
       final url = Uri.parse(
-          'https://flutter-shopping-app-42a56-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
+          'https://flutter-shopping-app-42a56-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$_token');
       await http.patch(url,
           body: jsonEncode({
             'title': newProduct.title,
@@ -125,7 +137,7 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((element) => element.id == id);
     if (prodIndex >= 0) {
       final url = Uri.parse(
-          'https://flutter-shopping-app-42a56-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
+          'https://flutter-shopping-app-42a56-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$_token');
 
       Product? removedItem = _items[prodIndex];
       _items.removeAt(prodIndex);
