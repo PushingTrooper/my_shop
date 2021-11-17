@@ -19,23 +19,21 @@ class Product with ChangeNotifier {
       required this.imageUrl,
       this.isFavorite = false});
 
-  void toggleFavoriteStatus(String token) {
+  void toggleFavoriteStatus(String token, String userId) {
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
 
     final url = Uri.parse(
-        'https://flutter-shopping-app-42a56-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$token');
-    http
-        .patch(url, body: jsonEncode({"isFavorite": isFavorite}))
-        .then((response) {
-          if (response.statusCode >= 400) {
-            isFavorite = oldStatus;
-            notifyListeners();
-          }
-        }).catchError((error) {
-          isFavorite = oldStatus;
-          notifyListeners();
-        });
+        'https://flutter-shopping-app-42a56-default-rtdb.europe-west1.firebasedatabase.app/userFavorites/$userId/$id.json?auth=$token');
+    http.put(url, body: jsonEncode(isFavorite)).then((response) {
+      if (response.statusCode >= 400) {
+        isFavorite = oldStatus;
+        notifyListeners();
+      }
+    }).catchError((error) {
+      isFavorite = oldStatus;
+      notifyListeners();
+    });
   }
 }

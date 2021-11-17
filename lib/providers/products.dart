@@ -43,9 +43,11 @@ class Products with ChangeNotifier {
   ];
 
   late String _token;
+  late String _userId;
 
-  void update(String token, List<Product> products) {
+  void update(String token, String userId, List<Product> products) {
     _token = token;
+    _userId = userId;
     _items = products;
   }
 
@@ -53,28 +55,38 @@ class Products with ChangeNotifier {
     return [..._items];
   }
 
-  Future<void> fetchAndSetProducts() async {
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    final filterEnd =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$_userId"' : '';
     final url = Uri.parse(
-        'https://flutter-shopping-app-42a56-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$_token');
+        'https://flutter-shopping-app-42a56-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$_token&$filterEnd');
 
     try {
       final response = await http.get(url);
-      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = jsonDecode(response.body) as Map<String, dynamic>?;
+
+      final favoriteUrl = Uri.parse(
+          'https://flutter-shopping-app-42a56-default-rtdb.europe-west1.firebasedatabase.app/userFavorites/$_userId.json?auth=$_token');
+      final favoritesResponse = await http.get(favoriteUrl);
+      final favoriteData =
+          jsonDecode(favoritesResponse.body) as Map<String, dynamic>?;
+
       final List<Product> loadedProducts = [];
-      for (var i = 0; i < data.length; i++) {
-        String prodId = data.keys.elementAt(i);
-        dynamic prodData = data.values.elementAt(i);
-        loadedProducts.add(Product(
-            id: prodId,
-            title: prodData['title'],
-            description: prodData['description'],
-            price: prodData['price'],
-            imageUrl: prodData['imageUrl'],
-            isFavorite: prodData['isFavorite']));
+      if (data != null) {
+        for (var i = 0; i < data.length; i++) {
+          String prodId = data.keys.elementAt(i);
+          dynamic prodData = data.values.elementAt(i);
+          loadedProducts.add(Product(
+              id: prodId,
+              title: prodData['title'],
+              description: prodData['description'],
+              price: prodData['price'],
+              imageUrl: prodData['imageUrl'],
+              isFavorite: favoriteData == null
+                  ? false
+                  : (favoriteData[prodId] ?? false)));
+        }
       }
-      /* data.forEach((prodId, prodData) {
-        
-      }); */
       _items = loadedProducts;
       notifyListeners();
     } catch (error) {
@@ -94,7 +106,8 @@ class Products with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
-          'isFavorite': product.isFavorite
+          'isFavorite': product.isFavorite,
+          'creatorId': _userId
         }),
       );
       var body = json.decode(response.body);
