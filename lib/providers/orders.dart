@@ -20,10 +20,10 @@ class OrderItem {
 
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
-  late String _token;
-  late String _userId;
+  String? _token;
+  String? _userId;
 
-  void update(String token, String userId, List<OrderItem> orders) {
+  void update(String? token, String? userId, List<OrderItem> orders) {
     _token = token;
     _userId = userId;
     _orders = orders;

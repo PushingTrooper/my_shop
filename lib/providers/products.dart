@@ -42,10 +42,10 @@ class Products with ChangeNotifier {
     // )
   ];
 
-  late String _token;
-  late String _userId;
+  String? _token;
+  String? _userId;
 
-  void update(String token, String userId, List<Product> products) {
+  void update(String? token, String? userId, List<Product> products) {
     _token = token;
     _userId = userId;
     _items = products;
