@@ -39,7 +39,6 @@ class Auth with ChangeNotifier {
             "password": password,
             "returnSecureToken": true,
           }));
-      print(response.body);
 
       final rData = jsonDecode(response.body);
       if (rData['error'] != null) {
